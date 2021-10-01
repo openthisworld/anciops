@@ -66,3 +66,22 @@
       url : https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
       dest: /usr/local/bin/docker-compose
       mode: 'u+x,g+x'
+      
+  #TEST BRANCH START
+  #поменять путь к файлу и название
+      
+  - name: copy Docker Compose files
+    copy:
+      src: files/{{ item }}
+      dest: /somewhere/yourproject/{{ item }}
+    loop:
+    - docker-compose.yml
+    - docker-compose.prod.yml
+
+  # use files parameter to use multiple docker-compose.yml files
+  - name: deploy Docker Compose stack
+    docker_compose:
+      project_src: /somewhere/yourproject
+      files:
+      - docker-compose.yml
+      - docker-compose.prod.yml
