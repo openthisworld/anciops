@@ -1,0 +1,6 @@
+version: "2"
+  services:
+    docker:
+        image: openthisworld/testops
+        ports:
+          - 80:80
