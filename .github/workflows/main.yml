@@ -1,39 +1,29 @@
+name: deploy ansible
+
 on:
   push:
     branches:
-    - main
-    - release/*
-  on:
-    pull_request:
-      branches:
-      - main
-      on:
-        workflow_dispatch:
-    name: Run playbook
-      uses: dawidd6/action-ansible-playbook@v2
-        with:
-    # Required, playbook filepath
-    playbook: deploy.yml
-    # Optional, directory where playbooks live
-    directory: ./
-    # Optional, SSH private key
-    key: ${{secrets.SSH_PRIVATE_KEY}}
-    # Optional, literal inventory file contents
-    inventory: |
-      [all]
-      example.com
+    - master
+  pull_request:
+    branches:
+    - master
 
-      [group1]
-      example.com
-    # Optional, SSH known hosts file content
-    known_hosts: .known_hosts
-    # Optional, encrypted vault password
-    vault_password: ${{secrets.VAULT_PASSWORD}}
-    # Optional, galaxy requirements filepath
-    requirements: galaxy-requirements.yml
-    # Optional, additional flags to pass to ansible-playbook
-    options: |
-      --inventory .hosts
-      --limit group1
-      --extra-vars hello=there
-      --verbose
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v2
+    - name: Lint Ansible Playbook
+      uses: ansible/ansible-lint-action@master
+      with:
+        targets: ""
+  deployAnsible:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: ./.github/actions/ansible
+      with: 
+        playbook: playbook.yml
+        inventory: localhost
