@@ -1,3 +1,2 @@
-# Consolidation of all groups
-[hosts:all]
+[all1]
 172.255.230.84
